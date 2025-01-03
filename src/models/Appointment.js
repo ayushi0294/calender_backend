@@ -2,7 +2,8 @@ import mongoose, { model } from 'mongoose';
 const { Schema } = mongoose;
 
 const appointmentSchema = new Schema({
-  doctorName: { type: String, required: true },
+  doctorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   patientName: { type: String, required: true },
   startDate: { type: Date, required: true }, // Date and time combined
   endDate: { type: Date, required: true },   // Date and time combined

@@ -2,7 +2,11 @@ import express, { json } from 'express';
 import { connect } from 'mongoose';
 import { config } from 'dotenv';
 import cors from 'cors';
+import jwt from "jsonwebtoken"
 import appointmentRoutes from './routes/appointments.js';
+import authRoutes from "./routes/authRoutes.js" ;
+import UserRoutes from "./routes/userRoutes.js"
+
 
 config();
 const app = express();
@@ -34,8 +38,21 @@ app.get('/', (req, res) => {
 });
 
 // Sample route for a resource (Appointments)
+// Authentication Middleware
+const authenticateToken = (req, res, next) => {
+  const token = req.header('Authorization')?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Access denied' });
 
-app.use('/api/appointments', appointmentRoutes);
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: 'Invalid token' });
+    req.user = user;
+    next();
+  });
+};
+
+app.use('/api/auth', authRoutes);
+app.use('/api/appointments',authenticateToken, appointmentRoutes);
+app.use("/api/users",authenticateToken ,UserRoutes)
 
 // Start the server
 const PORT = process.env.PORT || 5000;
