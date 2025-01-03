@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     ? { doctorId: req.user.id }  // If doctor, use doctorId
     : { userId: req.user.id }; 
     
-    const appointments = await Appointment.find(query).populate('userId', 'name') // populate doctor info
+    const appointments = await Appointment.find(query).populate('doctorId', 'name') // populate doctor info
     .exec();
     res.json(appointments);
   } catch (err) {
